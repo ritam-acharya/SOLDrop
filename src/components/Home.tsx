@@ -8,9 +8,11 @@ const Home = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const wallet = useWallet();
     const { connection } = useConnection();
+    const [loading, setLoading] = useState(false);
 
     async function airdrop() {
         if (wallet && wallet.publicKey && inputRef && inputRef.current){
+            setLoading(true);
             try{
                 const val = parseFloat(inputRef.current.value);
                 await connection.requestAirdrop(wallet.publicKey, val * LAMPORTS_PER_SOL);
@@ -19,6 +21,8 @@ const Home = () => {
                 console.log(error);
                 alert("You've either reached your airdrop limit today or the airdrop faucet has run dry.");
             }
+            inputRef.current.value = '';
+            setLoading(false);
         }
     }
 
@@ -90,8 +94,8 @@ const Home = () => {
                     }
                     <div 
                     onClick={airdrop}
-                    className="text-[16px] mt-4 md:text-[18px] lg:text-[20px] leading-[16px] md:leading-[18px] lg:leading-[20px] tracking-tight w-full h-auto my-4 flex items-center justify-center text-white py-3 px-3 rounded-lg cursor-pointer bg-gradient-to-r from-[#11C36A] to-[#722CDB] ">
-                        Send Airdrop
+                    className="text-[16px] mt-4 md:text-[18px] cursor-none lg:text-[20px] leading-[16px] md:leading-[18px] lg:leading-[20px] tracking-tight w-full h-auto my-4 flex items-center justify-center text-white py-3 px-3 rounded-lg bg-gradient-to-r from-[#11C36A] to-[#722CDB] ">
+                        { loading ? 'Loading...' : 'Send Airdrop' }
                     </div>
                     <div className="self-end mt-auto bg-[#141B2B] pt-4 w-full h-auto px-4 md:px-8 lg:px-10 text-[14px] md:text-[16px]  leading-[14px] md:leading-[16px] tracking-tight flex items-center justify-center text-center text-gray-500 border-t border-[#5C647C]  ">
                         <p>You can Airdrop 5 SOL at a time in your wallet</p>
